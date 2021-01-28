@@ -1,0 +1,846 @@
+openapi: 3.0.0
+
+# Document header
+
+info:
+  version: '1.0'
+  title: Delilah Restó Project
+  description:
+    This project proposes the creation of an online ordering system for a restaurant.
+  contact:
+    name: Diana P. Pineda Prada
+    url: 'https://www.acamica.com/'
+    email: dianitaprada@gmail.com.com
+  license:
+    name: Apache 2.0
+    url: 'https://www.apache.org/licenses/LICENSE-2.0.html'
+    
+externalDocs:
+  description: Github Repository
+  url: https://github.com/dianaprada/delilahResto
+
+# Server Info
+
+servers: 
+    - description: Delilah Restó API Server
+      url: https://localhost:3000/v1
+    # Added by API Auto Mocking Plugin
+    - description: SwaggerHub API Auto Mocking
+      url: https://virtserver.swaggerhub.com/dianaprada/delilahProjectAPI/1.0
+
+      
+
+# Tags
+
+tags:
+  - name: "Products"
+    description: "List of Delilah Restó products"
+  - name: "Authentication"
+    description: "User Authentication"
+  - name: "Users"
+    description: "User administration"
+  - name: "Favorites"
+    description: "Favorites administration"
+  - name: "Orders"
+    description: "access to orders received at Delilah Restó"
+
+# Path routes
+
+paths:
+  
+  # PRODUCTS
+  /products:
+    get:
+      tags:
+      - Products
+      summary: Returns all products by Status
+      description: Retrieves the list of products according to the status parameter
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/product'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError' 
+   
+  /products/new: 
+    post:
+      summary: Add a new product to the restaurant
+      description: Creates a new product in Delilah Restó App
+      tags:
+        - Products
+      security: 
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/product_info'
+      responses:
+        '201':
+          description: Product was created!
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/product'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError' 
+      
+  /products/{id}:
+    get:
+      summary: Retrieve a single product
+      description: Retrieve a single product
+      tags:
+        - Products
+      security: 
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          description: Products' ID
+          required: true
+          schema:
+            type: integer
+            example: 123
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/product'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'     
+      
+    put:
+      summary: Modify products' information
+      tags:
+        - Products
+      security: 
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          description: Products' ID
+          required: true
+          schema:
+            type: integer
+            example: 123
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/product_info'
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/product'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'  
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/NotFound'  
+    
+    delete:
+      summary: Delete product
+      tags:
+        - Products
+      security: 
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          description: Product ID
+          required: true
+          schema:
+            type: integer
+            example: 123
+      responses:
+        '204':
+          description: Product was deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/product'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError' 
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/NotFound'  
+  
+  #AUTHENTICATION
+  /login:
+    get:
+      summary: Get token
+      description: Pass as query arguments username and password
+      tags:
+        - Authentication
+      parameters:
+        - in: query
+          name: username
+          schema:
+            type: string
+            example: queen_freddie
+          required: true
+        - in: query
+          name: password
+          schema:
+            type: string
+            format: password
+            example: queen_freddie_password
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:    
+            application/json:
+              schema:
+                $ref: '#/components/schemas/token'
+        '401':
+          description: Unauthorized, invalid username or password
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError' 
+  # Users
+  
+  /register:
+    post:
+      tags: 
+      - Users
+      summary: Create new user
+      description: Include new user in database
+      responses:
+        '201':
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+        '400':
+          description: Invalid input 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: User already exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user'
+        description: New user information
+  
+  /users:
+    get:
+      summary: Returns all users
+      description: Only admin can query
+      tags:
+        - Users
+      security: 
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:    
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+        '401':
+          description: Error you are not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'
+
+  /users/{id}:
+    get:
+      summary: Get user's information
+      description: Admin will be able to fetch any info. User only can view its own
+      tags:
+        - Users
+      security: 
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          description: User's ID
+          required: true
+          schema:
+            type: integer
+            example: 213
+      responses:
+        '200':
+          description: Ok
+          content:    
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+        '401':
+          description: Error, you are not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/NotFound'  
+    put:
+      summary: Update user's information
+      description: Admin will be able to change any info. User only can edit its own
+      tags:
+        - Users
+      security: 
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          description: User's ID
+          required: true
+          schema:
+            type: integer
+            example: 123
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user_new'
+      responses:
+        '200':
+          description: Ok
+          content:    
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user_info'
+        '401':
+          description: Error, you are not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'  
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/NotFound'  
+    
+    delete:
+      summary: Delete user
+      description: Admin will be able to delete any user. User is not allowed
+      tags:
+        - Users
+      security: 
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          description: User's ID
+          required: true
+          schema:
+            type: integer
+            example: 512
+      responses:
+        '204':
+          description: User was deleted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/product'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError' 
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/NotFound'  
+                
+   # Favorites             
+  
+  /favorites/user/{id}:
+    get:
+      summary: Get user's favorites dishes
+      description: Returns all plates requested by user ordered by consume quantity
+      tags:
+        - Favorites
+      security: 
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          description: User's ID
+          required: true
+          schema:
+            type: integer
+            example: 123
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/product_sum'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'
+                  
+  # Orders
+  /orders:
+    get:
+      summary: Returns all orders depending on params
+      description: If no param if specified, orders from current day will be fetched. Before and after filters together and "at" add the date to the filter result
+      tags:
+        - Orders
+      parameters:
+        - in: query
+          name: at
+          description: Filter orders based on exact ISO date.
+          example: "2020-10-10"
+          required: false
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: before
+          description: Filter orders before or equal ISO date.
+          example: "2020-10-10"
+          required: false
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: after
+          description: Filter orders after or equal ISO date.
+          example: "2020-10-10"
+          required: false
+          schema:
+            type: string
+            format: date
+      security: 
+        - bearerAuth: []
+      responses:
+        '201':
+          description: Array of orders.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/order'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'
+    
+    post:
+      summary: Create a new order for the user
+      description: User's ID will be found inside token, so it's not necessary
+      tags:
+        - Orders
+      security: 
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/order_new'
+      responses:
+        '201':
+          description: Created
+          content:    
+            application/json:
+              schema:
+                $ref: '#/components/schemas/order'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'
+          
+  /orders/{id}:
+    get:
+      summary: Get order info
+      tags:
+        - Orders
+      security: 
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          description: Order ID
+          required: true
+          schema:
+            type: integer
+            example: 23
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/order'
+        '401':
+          description: Error, you are not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'  
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/NotFound'  
+    put:
+      summary: Update order status
+      tags:
+        - Orders
+      security: 
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          description: Order ID
+          required: true
+          schema:
+            type: integer
+            example: 23
+        - in: query
+          name: state
+          description: New state of the order
+          example: 3
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/order'
+        '401':
+          description: Error, you are not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'  
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/NotFound' 
+  
+          
+# components:
+
+components:
+  schemas:
+    # Products' Schemas
+    
+    product_new:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 123
+        quantity:
+          type: number
+          example: 5
+          
+    product_info:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Sandwich Veggie
+        shortName:
+          type: string
+          example: SandVegg
+        description:
+          type: string
+          example: Con huevo, rúcula, champiñones, hamburguesa de soja y hummus de remolacha.
+        price:
+          type: number
+          example: 310
+        bigImg_path:
+          type: string
+          example: ./src/img/sang_veg.png
+        thumbnail_path:
+          type: string
+          example: ./src/img/thumbnail/sang_veg.png
+        is_enabled:
+          type: string
+          example: true     
+    
+    product:
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: number
+              example: 3
+        - $ref: '#/components/schemas/product_info'
+    
+    product_sum:
+      allOf:
+        - type: object
+          properties:
+            dish:
+              $ref: '#/components/schemas/product'
+        - type: object  
+          properties:
+            accumulated:
+              type: number
+              example: 15
+              description: Number of times the user's requested a product.
+        
+    # Schema for error response body
+    token:
+      type: object
+      properties:
+        token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkZyZWRkaWUgTWVyY3VyeSIsImlhdCI6MTUxNjIzOTAyMn0.0ZUViVvO9k_fR7ziq4bYJ3NyqP40bIHPudHRa1tb9Sk
+    
+    # User's Schemas     
+    user_info:
+      type: object
+      properties:
+        full_name:
+          type: string
+          example: Freddie Mercury
+        username:
+          type: string
+          example: queen_freddie
+        email:
+          type: string
+          example: freddiemercury@gmail.com
+        phone:
+          type: string
+          example: +447712345678
+        address:
+          type: string
+          example: 1Logan PIKensington, London W8 6DE, UK
+          
+    user_new:
+      allOf:
+        - $ref: '#/components/schemas/user_info'
+        - type: object
+          properties:
+            password:       # Password is required
+              type: string
+              example: user_password
+          required:
+            - password
+      
+    user:
+      allOf:
+        - type: object
+          properties:
+            id:             # id num is added
+              type: number
+              example: 12345
+        - $ref: '#/components/schemas/user_info'
+        - type: object
+          properties:
+            id_security_type: # Admin / User
+              type: number
+              example: 1
+              
+    # Orders' Schemas
+    
+    ordered_dishes:
+      type: array
+      items:
+        allOf:
+          - type: object
+            properties:
+              dish:
+                $ref: '#/components/schemas/product'
+          - type: object  
+            properties:
+              ordered:
+                type: number
+                example: 3
+                description: Number of dish ordered
+              purchased_price:
+                type: number
+                example: 250
+                description: Price in which the dish was purchased
+              subtotal:
+                type: number
+                example: 630
+                description: Subtotal purchased.
+    
+    order_new:
+      type: object
+      properties:
+        dishes:
+          type: array
+          items:
+            $ref: "#/components/schemas/product_new"
+        payment_type:
+          type: string
+          example: Efectivo
+        address:
+          type: string
+          example: 1Logan PIKensington, London W8 6DE, UK
+          
+    order:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 5412
+        number:
+          type: integer
+          example: 500
+        address:
+          type: string
+          example: 1Logan PIKensington, London W8 6DE, UK
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        description:
+          type: string
+          example: 1xHamClas 1xSandVegg
+        status:
+          type: array
+          items:
+            type: object
+            properties:
+              status:
+                type: string
+                example: En Preparaciòn
+              timestamp:
+                type: string
+                format: date-time
+        user:
+          $ref: "#/components/schemas/user"
+        payment:
+          type: object
+          properties:
+            type:
+              type: number
+              example: 2
+            total:
+              type: number
+              example: 650
+        dishes:
+          $ref: "#/components/schemas/ordered_dishes"
+        
+    # Schema for error response body
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "An error has ocurred: <error>"
+      required:
+        - error
+
+  # RESPONSES:        
+    
+  responses:
+  
+    # Errors: 
+    
+    BadRequest:
+      description: Invalid ID supplied
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: The requested resource doesn't exist.
+              
+    UnauthorizedError:
+      description: The request's authorizations do not match the required ones needed to access the resource
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: permissions denied
+      
+  
+  # Define the security scheme type (HTTP bearer)
+  
+  securitySchemes:
+    bearerAuth:            # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT    # optional, arbitrary value for documentation purposes
