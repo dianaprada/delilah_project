@@ -111,7 +111,7 @@ router.delete('/products/:id', ((req, res) => {
  * User Login
  */
 
-router.post('/login',  AuthController.signIn);
+router.post('/login', jsonParser, AuthController.signIn);
 
 /**
  * Register - Create new user

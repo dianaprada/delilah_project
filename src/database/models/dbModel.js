@@ -29,6 +29,9 @@ pdtID: {
   pdtShortName : {
     type: DataTypes.STRING,
     allowNull: false,
+    unique: {
+      msg: 'This Product short name is already taken.'
+    },
     validate: {
       len: [5,20],  // only allow values with length between 10 and 20
       notNull: {
@@ -113,16 +116,21 @@ User.init({
   },
   userName : {
     type: DataTypes.STRING,
+    //is: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,  
     allowNull: false,
-    unique: true,
+    required: true,
+    unique: {
+      msg: 'This Username is already taken.'
+    },
     validate: {
       // TO DO => Validación para que reciba el _ y -
-      isAlphanumeric: {
+      
+       isAlphanumeric: {
         msg: 'User Name only allow alphanumeric characters, so "_abc" will fail'
       },  // will only allow alphanumeric characters, so "_abc" will fail
       len: {
-        args: [8,20],  
-        msg: 'User Name must be between 8 and 20 characters in length.'
+        args: [5,20],  
+        msg: 'User Name must be between 5 and 20 characters in length.'
       },
       notNull: {
         msg: 'Please enter the User Name'
@@ -156,15 +164,20 @@ User.init({
   userEmail : {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true,
+    required: true,
+    unique: {
+      msg: 'This Email address is already taken.'
+  },  
     validate: {
-      isEmail: true,   // checks for email format (foo@bar.com)
+      isEmail: {
+        msg: 'Email address must be valid.'
+      },   // checks for email format (foo@bar.com)
       len: {
         args: [7,100],  
-        msg: 'Email must be between 7 and 100 characters in length.'
+        msg: 'Email address must be between 7 and 100 characters in length.'
       },
       notNull: {
-        msg: 'Please enter an email'
+        msg: 'Please enter an Email address'
       }
     }   
   },
