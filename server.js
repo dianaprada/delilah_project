@@ -1,58 +1,73 @@
-require('dotenv').config();
+require("dotenv").config();
 
-/* Server config */
-const express = require('express');
+/**
+ * Server config
+ */
+const express = require("express");
 const server = express();
-
-/* Routes */
-const Router = require('./src/routes/router');
-server.use('/', Router);
-
-/* Database and Schemas */
-const sequelize = require('./src/database/db');
-
 /* Port config */
-const PORT = process.env.PORT;  
+const PORT = process.env.PORT;
+
+/**
+ * Data Base and Schemas
+ */
+const sequelize = require("./src/database/db");
 
 /**
  * Middlewares
  */
 
- /* Lets server accept JSON as a body */
-server.use(express.json()); 
-server.use(express.urlencoded({ extended: false }));
+/* Cors */
+var cors = require("cors");
 
-const { errorHandler } = require('./src/middlewares/errorHandler');
+/* Helmet */
+const helmet = require("helmet");
 
-var cors = require('cors');
+/* errorHandler */
+const { errorHandler } = require("./src/middlewares/errorHandler");
+
+/**
+ * Routes
+ */
+const Router = require("./src/routes/router");
+server.use("/", Router);
+
+/**
+ * Middlewares
+ */
 server.use(cors()); //Enable CORS Origin *
+server.use(helmet());
+
+/* Lets server accept JSON as a body */
+server.use(express.json());
+server.use(express.urlencoded({ extended: false }));
 
 //server.use(errorHandler);
 
 /**
  * Start Server
  */
-server.listen(PORT, (() => {
+server.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
 
-/* Database connection */
-/*
+  /* Database connection */
+  /*
   sequelize.authenticate().then(() => {
     console.log("Database is connected")
   }).catch((error) => {
     console.log('An error has occurred: ', error);
   })
 */
-}));
-
-/**
-* Force True: Drop Tables
-*/
-sequelize.sync({ force: false })
-.then(() => {
-  console.log("Tables have been created")
-}).catch((error) => {
-  console.log("Something was wrong: ", error);
 });
 
-
+/**
+ * Force True: Drop Tables
+ */
+sequelize
+  .sync({ force: false })
+  .then(() => {
+    console.log("Tables have been created");
+  })
+  .catch((error) => {
+    console.log("Something was wrong: ", error);
+  });

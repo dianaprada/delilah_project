@@ -10,6 +10,7 @@ const { Op } = require('sequelize');
 
 /* Controllers */
 const AuthController = require('../controllers/AuthController');
+const ProdController = require('../controllers/ProdController');
 
 
 /**
@@ -22,90 +23,29 @@ const jsonParser = bodyParser.json();
 /* create application/x-www-form-urlencoded parser */
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
 
-/**
- * connection test
- *//*
-router.get('/products', function(req, res){
-    //res.send('Hello world');
-    res.json({
-      success: 1,
-      message: "This rest API is working"
-    })
-})*/
+ /* Authentication */
+ const auth = require('../middlewares/auth');
+
 
 /**
 * Products CRUD
 */
 
 /* Getting all Products by status */
+router.get('/products', auth, ProdController.gettingAll);
 
-router.get('/products', ((req, res) => {
-   db.Product.findAll({ where: { pdtStatus: "enabled" } }).then((products) => {
-     res.status(200).json(products);
-   }).catch ((err) => {
-     res.status(400).json({ message: err.message })
-   })
- }));
+/* Creating one - Only admin users */
+router.post('/products/new', jsonParser, auth, ProdController.creatingOne);
 
-/* Creating one */
+/* Getting one by ID - Only admin users */
+router.get('/products/:id', auth, ProdController.findProduct, ProdController.gettingOne);
 
-router.post('/products/new', jsonParser, ((req, res) => {
-   db.Product.create({
-       pdtLargeName: req.body.pdtLargeName,
-       pdtShortName: req.body.pdtShortName,
-       pdtDescription: req.body.pdtDescription,
-       pdtPrice: req.body.pdtPrice,
-       pdtBigImg: req.body.pdtBigImg,
-       pdtThumbnail: req.body.pdtThumbnail,
-       pdtStatus: req.body.pdtStatus
-   })
-    .then((newProduct) => {
-      res.status(201).json(newProduct);
-    }).catch ((err) => {
-      res.status(400).json({ message: err.message })
-    })
- }));
- 
-/* Getting one by ID */
+/* Updating one - Only admin users */
+router.put('/products/:id', jsonParser, auth, ProdController.findProduct, ProdController.updatingOne);
 
-router.get('/products/:id', ((req, res) => {
-  let id = req.params.id;
-  db.Product.findOne( { where: { pdtID: id } })
-  .then((product) => {
-    res.status(200).json(product);
-  }).catch ((err) => {  
-    res.status(400).json({ message: err.message })
-  })
-}));
+/* Deleting one - Only admin users */
+router.delete('/products/:id', auth, ProdController.findProduct, ProdController.deletingOne);
 
-
-/* Updating one */
-
-router.put('/products/:id', jsonParser, ((req, res) => {
-  let id = req.params.id;
-  let newData = req.body;
-    db.Product.findOne ( { where: { pdtID: id }} )
-      .then((product) => {
-        product.update(newData)
-          .then((pdtUpdated) => {
-            res.status(200).json(pdtUpdated);
-          }).catch ((err) => {  
-            res.status(400).json({ message: err.message })
-          })
-      })
-}));
-
-/* Deleting one */
-
-router.delete('/products/:id', ((req, res) => {
-  let id = req.params.id;
-  db.Product.destroy( { where: { pdtID: id } })
-  .then((product) => {
-    res.status(204).json(product);
-  }).catch ((err) => {  
-    res.status(400).json({ message: err.message })
-  })
-}));
 
 /**
  * User Login
@@ -119,70 +59,77 @@ router.post('/login', jsonParser, AuthController.signIn);
 
 router.post('/register', jsonParser, AuthController.signUp);
 
-
-
 /**
 * Users CRUD
 */
 
-/* Getting all */
+/* Getting all - Only admin users consults all users */
+router.get('/users', auth, AuthController.gettingAll);
 
-router.get('/users', ((req, res) => {
-  res.send('Returns all users');
-}));
+/* Getting one by ID - Only admin users consults users by ID */
+router.get('/users/:id', auth, AuthController.findUser, AuthController.gettingOne);
 
-/* Getting one by ID */
+/* Updating one - Only admin users */
+router.put('/users/:id', jsonParser, auth, AuthController.findUser, AuthController.updatingOne);
 
-router.get('/users/:id', ((req, res) => {
-  let id = req.params.id;
-  db.User.findOne( { where: { userID: id } })
-  .then((user) => {
-    res.status(200).json(user);
-  }).catch ((err) => {  
-    res.status(400).json({ message: err.message })
-  })
-}));
+/* Deleting one - Only admin users */
+router.delete('/users/:id', auth, AuthController.findUser, AuthController.deletingOne);
 
-/* Updating one */
-router.put('/users/:id', jsonParser, ((req, res) => {
-  let id = req.params.id;
-  let newData = req.body;
-    db.User.findOne ( { where: { userID: id }} )
-      .then((user) => {
-        user.update(newData)
-          .then((userUpdated) => {
-            res.status(200).json(userUpdated);
-          }).catch ((err) => {  
-            res.status(400).json({ message: err.message })
-          })
-      })
-}));
-
-/* Deleting one */
-
-router.delete('/users/:id', ((req, res) => {
-  let id = req.params.id;
-  db.User.destroy( { where: { userID: id } })
-  .then((user) => {
-    res.status(204).json(user);
-  }).catch ((err) => {  
-    res.status(400).json({ message: err.message })
-  })
-}));
 
 /**
 * Favorites CRUD
 */
 
 /* Creating one */
+/* TO DO IN SWAGGER */
+
+/* only Client users add a dish to their favorites */
+router.post('/favorites/users/:id', jsonParser, ((req, res) =>{
+  //res.send('Hello world');
+  res.send('User Client adds a dish to his list of favorites');
+}));
 
 /* Getting all */
+/* Return all favorite dishes of a user */
+
+
+/* TO DO: Yo creo que está mal la ruta, que no puede ser :id 
+*  el favoriteId, sino el userID
+*/
+
+router.get('/favorites/users/:id', ((req, res) => {
+  let id = req.params.id;
+  db.Favorite.findAll( { where: { userID: id } })
+  .then((favs) => {
+    res.status(200).json(favs);
+  }).catch ((err) => {  
+    res.status(401).json({ message: err.message })
+  })
+}));
+
+
 
 /* Getting one by ID */
+/* I think this route is not necessary */
+
+router.get('/favorites/users/:id', ((req, res) => {
+  res.send('Return a favorite dish by ID');
+}));
+
 
 /* Updating one */
+/* I think this route is not necessary */
+
+router.put('/favorites/users/:id', jsonParser, ((req, res) => {
+   res.send('Update a favorite dish');
+}));
 
 /* Deleting one */
+
+router.delete('/favorites/users/:id', ((req, res) => {
+  res.send('Delete a favorite dish');
+}));
+
 
 
 /**
@@ -190,29 +137,84 @@ router.delete('/users/:id', ((req, res) => {
 */
 
 /* Creating one */
+/* User Client Create an order */
+/* Can an admin user create an order? */
+
+router.post('/orders', jsonParser, ((req, res) =>{
+  //res.send('Hello world');
+  res.send('User Client creates a new order');
+}));
 
 /* Getting all */
+/* Admin user consults all orders that have been created by Client users */
+/* Filter orders based on exact ISO date */
+/* Admin will be able to fetch any info. User only can view its own*/
+router.get('/orders', ((req, res) => {
+  res.send('return all orders of the day');
+}));
+
 
 /* Getting one by ID */
 
+/* Only Admin user consults one order that have been created by Client users */
+
+router.get('/orders/:id', ((req, res) => {
+  res.send('returns a specific order');
+}));
+
+
+
 /* Updating one */
 
+/* Only Admin user update one order that have been created by Client users */
+
+router.put('/orders/:id', jsonParser, ((req, res) => {
+  res.send('Update an Order');
+}));
+
 /* Deleting one */
+
+/* Only Admin user consults one order that have been created by Client users */
+
+router.delete('/orders/:id', ((req, res) => {
+  res.send('Delete an Order');
+}));
 
 /**
 * Products_Orders CRUD
 */
 
 /* Creating one */
+/* TO DO IN SWAGGER */
+router.post('/product_orders', jsonParser, ((req, res) =>{
+  //res.send('Hello world');
+  res.send('????');
+}));
+
 
 /* Getting all */
+/* TO DO IN SWAGGER */
+router.get('/product_orders', ((req, res) => {
+  res.send('????');
+}));
 
 /* Getting one by ID */
+/* TO DO IN SWAGGER */
+router.get('/product_orders/:id', ((req, res) => {
+  res.send('????');
+}));
 
 /* Updating one */
+/* TO DO IN SWAGGER */
+router.put('/product_orders/:id', jsonParser, ((req, res) => {
+  res.send('Update an ???');
+}));
 
 /* Deleting one */
-
+/* TO DO IN SWAGGER */
+router.delete('/product_orders/:id', ((req, res) => {
+  res.send('Delete an ?????');
+}));
 
 
 module.exports = router

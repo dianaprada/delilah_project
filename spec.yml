@@ -186,7 +186,7 @@ paths:
             type: integer
             example: 123
       responses:
-        '204':
+        '200':
           description: Product was deleted
           content:
             application/json:
@@ -207,7 +207,7 @@ paths:
   
   #AUTHENTICATION
   /login:
-    get:
+    post:
       summary: Get token
       description: Pass as query arguments username and password
       tags:
@@ -260,7 +260,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-        '409':
+        '400':
           description: User already exist
           content:
             application/json:
@@ -330,6 +330,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/responses/NotFound'  
+                
     put:
       summary: Update user's information
       description: Admin will be able to change any info. User only can edit its own
@@ -387,7 +388,7 @@ paths:
             type: integer
             example: 512
       responses:
-        '204':
+        '200':
           description: User was deleted.
           content:
             application/json:
