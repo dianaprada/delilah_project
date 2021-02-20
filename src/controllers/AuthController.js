@@ -125,7 +125,6 @@ module.exports = {
           })
     },
 
-
     /* Getting one by ID */
 
     gettingOne(req, res) { 
@@ -137,7 +136,6 @@ module.exports = {
     /* Updating one */
 
     updatingOne(req, res) {
-
         /* Encrypt password */
         let hashNewPassword = bcrypt.hashSync(req.body.password, Number.parseInt(authConfig.rounds));
 

@@ -19,14 +19,15 @@ module.exports = (req, res, next) => {
 
     /* Check that the token is valid */
     jwt.verify(token, authConfig.secret, (err, decoded) => {
+       console.log('console.log Decoded: ', decoded);
       if (err) {
         res
           .status(500)
           .json({ msg: "There was a problem decoding the token", err });
       } else {
-        User.findAll(decoded.userId).then((user) => {
-          //console.log('console.log Decoded: ', decoded);
-          //console.log('console.log user: ', user);
+        User.findOne( { where: { userID: decoded.user.userID } }).then((user) => {
+         
+          console.log('console.log user: ', user);
           
           req.user = user;
           next();

@@ -120,7 +120,6 @@ User.init(
       },
       validate: {
         // TO DO => Validación para que reciba el _ y -
-
         isAlphanumeric: {
           msg:
             'User Name only allow alphanumeric characters, so "_abc" will fail',
@@ -211,11 +210,12 @@ User.init(
       },
     },
   },
-  {
+
+  { 
     sequelize,
     modelName: "user",
-    // options
   }
+
 );
 
 /**
@@ -258,7 +258,6 @@ Favorite.init(
   {
     sequelize,
     modelName: "favorite",
-    // options
   }
 );
 
@@ -391,6 +390,9 @@ Products_Order.init(
     // options
   }
 );
+
+
+
 
 /*
 Bands.hasMany(Albums);

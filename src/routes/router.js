@@ -9,8 +9,9 @@ const db = require('../database/models/dbModel');
 const { Op } = require('sequelize');
 
 /* Controllers */
-const AuthController = require('../controllers/AuthController');
-const ProdController = require('../controllers/ProdController');
+const AuthController = require('../controllers/authController');
+const ProdController = require('../controllers/prodController');
+const RolController = require('../policies/rolPolicy');
 
 
 /**
@@ -35,16 +36,16 @@ const urlencodedParser = bodyParser.urlencoded({ extended: false });
 router.get('/products', auth, ProdController.gettingAll);
 
 /* Creating one - Only admin users */
-router.post('/products/new', jsonParser, auth, ProdController.creatingOne);
+router.post('/products/new', jsonParser, auth, RolController.isAdmin, ProdController.creatingOne);
 
-/* Getting one by ID - Only admin users */
-router.get('/products/:id', auth, ProdController.findProduct, ProdController.gettingOne);
+/* Getting one by ID */
+router.get('/products/:id', auth, RolController.isAdmin, ProdController.findProduct,  ProdController.gettingOne);
 
 /* Updating one - Only admin users */
-router.put('/products/:id', jsonParser, auth, ProdController.findProduct, ProdController.updatingOne);
+router.put('/products/:id', jsonParser, auth, RolController.isAdmin, ProdController.findProduct, ProdController.updatingOne);
 
 /* Deleting one - Only admin users */
-router.delete('/products/:id', auth, ProdController.findProduct, ProdController.deletingOne);
+router.delete('/products/:id', auth, RolController.isAdmin, ProdController.findProduct, ProdController.deletingOne);
 
 
 /**
@@ -64,16 +65,16 @@ router.post('/register', jsonParser, AuthController.signUp);
 */
 
 /* Getting all - Only admin users consults all users */
-router.get('/users', auth, AuthController.gettingAll);
+router.get('/users', auth, RolController.isAdmin, AuthController.gettingAll);
 
 /* Getting one by ID - Only admin users consults users by ID */
-router.get('/users/:id', auth, AuthController.findUser, AuthController.gettingOne);
+router.get('/users/:id', auth, RolController.isAdmin, AuthController.findUser, AuthController.gettingOne);
 
 /* Updating one - Only admin users */
-router.put('/users/:id', jsonParser, auth, AuthController.findUser, AuthController.updatingOne);
+router.put('/users/:id', jsonParser, auth, RolController.isAdmin, AuthController.findUser, AuthController.updatingOne);
 
 /* Deleting one - Only admin users */
-router.delete('/users/:id', auth, AuthController.findUser, AuthController.deletingOne);
+router.delete('/users/:id', auth, RolController.isAdmin, AuthController.findUser, AuthController.deletingOne);
 
 
 /**
