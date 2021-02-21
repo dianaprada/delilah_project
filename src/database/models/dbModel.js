@@ -40,7 +40,6 @@ Product.init(
     pdtDescription: {
       type: DataTypes.STRING,
     },
-
     pdtPrice: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
@@ -211,11 +210,10 @@ User.init(
     },
   },
 
-  { 
+  {
     sequelize,
     modelName: "user",
   }
-
 );
 
 /**
@@ -232,7 +230,7 @@ Favorite.init(
       autoIncrement: true,
       allowNull: false,
     },
-    pdtId: {
+    pdtID: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
@@ -240,7 +238,7 @@ Favorite.init(
         model: Product,
 
         // This is the column name of the referenced model
-        key: "pdtId",
+        key: "pdtID",
       },
     },
     userID: {
@@ -258,6 +256,12 @@ Favorite.init(
   {
     sequelize,
     modelName: "favorite",
+    indexes: [
+      {
+        unique: true,
+        fields: ["pdtID", "userID"],
+      },
+    ],
   }
 );
 
@@ -390,9 +394,6 @@ Products_Order.init(
     // options
   }
 );
-
-
-
 
 /*
 Bands.hasMany(Albums);

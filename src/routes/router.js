@@ -11,8 +11,8 @@ const { Op } = require('sequelize');
 /* Controllers */
 const AuthController = require('../controllers/authController');
 const ProdController = require('../controllers/prodController');
+const FavController = require('../controllers/favController');
 const RolController = require('../policies/rolPolicy');
-
 
 /**
  * Middlewares
@@ -26,7 +26,6 @@ const urlencodedParser = bodyParser.urlencoded({ extended: false });
 
  /* Authentication */
  const auth = require('../middlewares/auth');
-
 
 /**
 * Products CRUD
@@ -46,7 +45,6 @@ router.put('/products/:id', jsonParser, auth, RolController.isAdmin, ProdControl
 
 /* Deleting one - Only admin users */
 router.delete('/products/:id', auth, RolController.isAdmin, ProdController.findProduct, ProdController.deletingOne);
-
 
 /**
  * User Login
@@ -76,61 +74,18 @@ router.put('/users/:id', jsonParser, auth, RolController.isAdmin, AuthController
 /* Deleting one - Only admin users */
 router.delete('/users/:id', auth, RolController.isAdmin, AuthController.findUser, AuthController.deletingOne);
 
-
 /**
 * Favorites CRUD
 */
 
-/* Creating one */
-/* TO DO IN SWAGGER */
+/* Creating one */ /* TO DO IN SWAGGER */
+router.post('/favorites/users/', jsonParser, auth, RolController.isClient, FavController.checkUser, FavController.findProduct, FavController.findProduct, FavController.checkDuplicates, FavController.creatingOne);
 
-/* only Client users add a dish to their favorites */
-router.post('/favorites/users/:id', jsonParser, ((req, res) =>{
-  //res.send('Hello world');
-  res.send('User Client adds a dish to his list of favorites');
-}));
-
-/* Getting all */
-/* Return all favorite dishes of a user */
-
-
-/* TO DO: Yo creo que está mal la ruta, que no puede ser :id 
-*  el favoriteId, sino el userID
-*/
-
-router.get('/favorites/users/:id', ((req, res) => {
-  let id = req.params.id;
-  db.Favorite.findAll( { where: { userID: id } })
-  .then((favs) => {
-    res.status(200).json(favs);
-  }).catch ((err) => {  
-    res.status(401).json({ message: err.message })
-  })
-}));
-
-
-
-/* Getting one by ID */
-/* I think this route is not necessary */
-
-router.get('/favorites/users/:id', ((req, res) => {
-  res.send('Return a favorite dish by ID');
-}));
-
-
-/* Updating one */
-/* I think this route is not necessary */
-
-router.put('/favorites/users/:id', jsonParser, ((req, res) => {
-   res.send('Update a favorite dish');
-}));
+/* Getting all - Return all favorite dishes of a user  */
+router.get('/favorites/users/:id', auth, RolController.isClient, FavController.checkUserParams, FavController.gettingAll);
 
 /* Deleting one */
-
-router.delete('/favorites/users/:id', ((req, res) => {
-  res.send('Delete a favorite dish');
-}));
-
+router.delete('/favorites/users/', jsonParser, auth, RolController.isClient, FavController.checkUser, FavController.findFav, FavController.deletingOne);
 
 
 /**
@@ -162,8 +117,6 @@ router.get('/orders', ((req, res) => {
 router.get('/orders/:id', ((req, res) => {
   res.send('returns a specific order');
 }));
-
-
 
 /* Updating one */
 

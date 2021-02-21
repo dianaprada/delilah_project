@@ -1,7 +1,8 @@
 const { Product } = require("../database/models/dbModel");
 
 module.exports = {
-  /* Creating one */
+  
+/* Creating one */
 
   async creatingOne(req, res) {
     let products = await Product.create({
@@ -17,7 +18,7 @@ module.exports = {
     res.status(200).json(products);
   },
 
-  /* Getting all Products by status */
+/* Getting all Products by status */
 
   async gettingAll(req, res) {
     let products = await Product.findAll({ where: { pdtStatus: "Enabled" } });
@@ -25,7 +26,7 @@ module.exports = {
     res.status(200).json(products);
   },
 
-  /* Middleware Find Product by ID */
+/* Middleware Find Product by ID */
 
   async findProduct(req, res, next) {
     let product = await Product.findOne({ where: { pdtID: req.params.id } });
@@ -38,13 +39,13 @@ module.exports = {
     }
   },
 
-  /* Getting one by ID */
+/* Getting one by ID */
 
   async gettingOne(req, res) {
     res.status(200).json(req.product);
   },
 
-  /* Updating one */
+/* Updating one */
 
   async updatingOne(req, res) {
     req.product.pdtLargeName = req.body.pdtLargeName;
@@ -60,11 +61,12 @@ module.exports = {
     });
   },
 
-  /* Deleting one */
+/* Deleting one */
 
   async deletingOne(req, res) {
     req.product.destroy().then(() => {
       res.status(200).json({ msg: "Product has been deleted" });
     });
   },
+  
 };

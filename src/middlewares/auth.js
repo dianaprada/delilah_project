@@ -9,7 +9,6 @@ const { User } = require("../database/models/dbModel");
 
 module.exports = (req, res, next) => {
   //console.log('console.log Headers: ', req.headers);
-
   /* Check that the token exists */
   if (!req.headers.authorization) {
     res.status(401).json({ msg: "Unauthorized user" });
@@ -19,20 +18,20 @@ module.exports = (req, res, next) => {
 
     /* Check that the token is valid */
     jwt.verify(token, authConfig.secret, (err, decoded) => {
-       console.log('console.log Decoded: ', decoded);
+      //console.log('console.log Decoded: ', decoded);
       if (err) {
         res
           .status(500)
           .json({ msg: "There was a problem decoding the token", err });
       } else {
-        User.findOne( { where: { userID: decoded.user.userID } }).then((user) => {
-         
-          console.log('console.log user: ', user);
-          
-          req.user = user;
-          next();
+        User.findOne({ where: { userID: decoded.user.userID } }).then(
+          (user) => {
+            console.log("console.log user: ", user);
 
-        });
+            req.user = user;
+            next();
+          }
+        );
       }
     });
   }
