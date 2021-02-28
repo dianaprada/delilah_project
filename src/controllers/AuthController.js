@@ -10,7 +10,9 @@ const jwt = require("jsonwebtoken");
 const authConfig = require("../../config/auth");
 
 module.exports = {
+  
   /* login */
+
   signIn(req, res) {
     let { userAccount, password } = req.body;
 
@@ -46,6 +48,7 @@ module.exports = {
   },
 
   /* Register - Create new user */
+
   signUp(req, res) {
     let passwordLen = req.body.password;
 
@@ -95,14 +98,6 @@ module.exports = {
     }
   },
 
-  /* Getting all */
-
-  gettingAll(req, res) {
-    User.findAll({ where: { userStatus: "Enabled" } }).then((users) => {
-      res.status(200).json(users);
-    });
-  },
-
   /* Middelware Find User by ID */
 
   findUser(req, res, next) {
@@ -113,6 +108,15 @@ module.exports = {
         req.user = user;
         next();
       }
+    });
+  },
+
+
+  /* Getting all */
+
+  gettingAll(req, res) {
+    User.findAll({ where: { userStatus: "Enabled" } }).then((users) => {
+      res.status(200).json(users);
     });
   },
 

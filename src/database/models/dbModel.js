@@ -282,26 +282,23 @@ Order.init(
     userID: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      references: {
-        // This is a reference to another model
-        model: User,
-
-        // This is the column name of the referenced model
-        key: "userID",
-      },
     },
     orderStatus: {
       type: DataTypes.ENUM(
+        "New",
         "Confirmed",
         "In preparation",
-        "On track",
+        "Sent",
+        "Canceled",
         "Delivered"
       ),
+      defaultValue: "New",
       allowNull: false,
     },
     orderTime: {
       type: DataTypes.TIME,
       allowNull: false,
+      defaultValue: DataTypes.NOW,
     },
     orderDate: {
       type: DataTypes.DATE,
@@ -310,6 +307,7 @@ Order.init(
       validate: {
         isDate: true, // only allow date strings
       },
+
     },
     orderPrice: {
       type: DataTypes.DECIMAL(10, 2),
@@ -334,7 +332,7 @@ Order.init(
 );
 
 /**
- * Products_Orders Model
+ * Products_Order Model
  */
 
 class Products_Order extends Model {}
@@ -347,7 +345,7 @@ Products_Order.init(
       autoIncrement: true,
       allowNull: false,
     },
-    pdtId: {
+    pdtID: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
@@ -355,7 +353,7 @@ Products_Order.init(
         model: Product,
 
         // This is the column name of the referenced model
-        key: "pdtId",
+        key: "pdtID",
       },
     },
     orderID: {
@@ -394,6 +392,8 @@ Products_Order.init(
     // options
   }
 );
+
+User.hasMany(Order, { foreignKey: 'userID' });
 
 /*
 Bands.hasMany(Albums);

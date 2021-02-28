@@ -1,7 +1,33 @@
 const { Favorite, Product, User } = require("../database/models/dbModel");
 
 module.exports = {
-  
+
+/**
+* Middlewares
+*/
+
+/* Check User - Body & req*/
+
+async checkUser(req, res, next) {
+  let user = await User.findOne({ where: { userID: req.body.userID } });
+  if (user.userID === req.user.userID) {
+    next();
+  } else {
+    res.status(401).json({ msg: "Unauthorized User" });
+  }
+},
+
+/* Check User - params & req*/
+
+async checkUserParams(req, res, next) {
+  let user = await User.findOne({ where: { userID: req.params.id } });
+  if (user.userID === req.user.userID) {
+    next();
+  } else {
+    res.status(401).json({ msg: "Unauthorized User" });
+  }
+},
+
 /* Find Product  */
 
   async findProduct(req, res, next) {
@@ -27,27 +53,24 @@ module.exports = {
     }
   },
 
-/* Check User - Body & req*/
+  /* Find Favorite */
 
-  async checkUser(req, res, next) {
-    let user = await User.findOne({ where: { userID: req.body.userID } });
-    if (user.userID === req.user.userID) {
-      next();
+  async findFav(req, res, next) {
+    let { userID, pdtID } = req.body;
+    let favorite = await Favorite.findOne({
+      where: { userID: userID, pdtID: pdtID },
+    });
+    if (!favorite) {
+      res.status(404).json({ msg: "Favorite dish not found" });
     } else {
-      res.status(401).json({ msg: "Unauthorized User" });
+      req.favorite = favorite;
+      next();
     }
   },
 
-/* Check User - params & req*/
-
-  async checkUserParams(req, res, next) {
-    let user = await User.findOne({ where: { userID: req.params.id } });
-    if (user.userID === req.user.userID) {
-      next();
-    } else {
-      res.status(401).json({ msg: "Unauthorized User" });
-    }
-  },
+/**
+* Favorites CRUD
+*/
 
 /* Creating one */
 
@@ -65,21 +88,6 @@ module.exports = {
     let userId = req.params.id;
     let favorites = await Favorite.findAll({ where: { userID: userId } });
     res.status(200).json(favorites);
-  },
-
-/* Find Favorite */
-
-  async findFav(req, res, next) {
-    let { userID, pdtID } = req.body;
-    let favorite = await Favorite.findOne({
-      where: { userID: userID, pdtID: pdtID },
-    });
-    if (!favorite) {
-      res.status(404).json({ msg: "Favorite dish not found" });
-    } else {
-      req.favorite = favorite;
-      next();
-    }
   },
 
 /* Deleting one */

@@ -26,7 +26,7 @@ module.exports = (req, res, next) => {
       } else {
         User.findOne({ where: { userID: decoded.user.userID } }).then(
           (user) => {
-            console.log("console.log user: ", user);
+            //console.log("console.log  Usuario Autenticado: ", user);
 
             req.user = user;
             next();
