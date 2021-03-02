@@ -1,34 +1,33 @@
 const { Favorite, Product, User } = require("../database/models/dbModel");
 
 module.exports = {
+  /**
+   * Middlewares
+   */
 
-/**
-* Middlewares
-*/
+  /* Check User - Body & req*/
 
-/* Check User - Body & req*/
+  async checkUser(req, res, next) {
+    let user = await User.findOne({ where: { userID: req.body.userID } });
+    if (user.userID === req.user.userID) {
+      next();
+    } else {
+      res.status(401).json({ msg: "Unauthorized User" });
+    }
+  },
 
-async checkUser(req, res, next) {
-  let user = await User.findOne({ where: { userID: req.body.userID } });
-  if (user.userID === req.user.userID) {
-    next();
-  } else {
-    res.status(401).json({ msg: "Unauthorized User" });
-  }
-},
+  /* Check User - params & req*/
 
-/* Check User - params & req*/
+  async checkUserParams(req, res, next) {
+    let user = await User.findOne({ where: { userID: req.params.id } });
+    if (user.userID === req.user.userID) {
+      next();
+    } else {
+      res.status(401).json({ msg: "Unauthorized User" });
+    }
+  },
 
-async checkUserParams(req, res, next) {
-  let user = await User.findOne({ where: { userID: req.params.id } });
-  if (user.userID === req.user.userID) {
-    next();
-  } else {
-    res.status(401).json({ msg: "Unauthorized User" });
-  }
-},
-
-/* Find Product  */
+  /* Find Product  */
 
   async findProduct(req, res, next) {
     let product = await Product.findOne({ where: { pdtID: req.body.pdtID } });
@@ -39,7 +38,7 @@ async checkUserParams(req, res, next) {
     }
   },
 
-/* Check duplicate favorites */
+  /* Check duplicate favorites */
 
   async checkDuplicates(req, res, next) {
     let { userID, pdtID } = req.body;
@@ -68,11 +67,11 @@ async checkUserParams(req, res, next) {
     }
   },
 
-/**
-* Favorites CRUD
-*/
+  /**
+   * Favorites CRUD
+   */
 
-/* Creating one */
+  /* Creating one */
 
   async creatingOne(req, res) {
     let favorites = await Favorite.create({
@@ -82,7 +81,7 @@ async checkUserParams(req, res, next) {
     res.status(200).json(favorites);
   },
 
-/* Getting all Favorites dishes  */
+  /* Getting all Favorites dishes  */
 
   async gettingAll(req, res) {
     let userId = req.params.id;
@@ -90,12 +89,11 @@ async checkUserParams(req, res, next) {
     res.status(200).json(favorites);
   },
 
-/* Deleting one */
+  /* Deleting one */
 
   async deletingOne(req, res) {
     req.favorite.destroy().then(() => {
       res.status(200).json({ msg: "Favorite dish has been deleted" });
     });
   },
-  
 };

@@ -42,22 +42,13 @@ server.use(helmet());
 server.use(express.json());
 server.use(express.urlencoded({ extended: false }));
 
-//server.use(errorHandler);
+server.use(errorHandler);
 
 /**
  * Start Server
  */
 server.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
-
-  /* Database connection */
-  /*
-  sequelize.authenticate().then(() => {
-    console.log("Database is connected")
-  }).catch((error) => {
-    console.log('An error has occurred: ', error);
-  })
-*/
 });
 
 /**

@@ -53,56 +53,53 @@ async function findOrder(req, res, next) {
 
 async function checkOrderData(req, res, next) {
   try {
-
     const prodPromises = req.body.prodArray.map((everyProd) => {
       const { pdtID } = everyProd;
-      return Product.findOne({ where: { pdtID: pdtID } })
-    })
+      return Product.findOne({ where: { pdtID: pdtID } });
+    });
 
     const products = await Promise.all(prodPromises);
 
-    const checkProducts = products.filter(onlyOneProduct => onlyOneProduct === null);
+    const checkProducts = products.filter(
+      (onlyOneProduct) => onlyOneProduct === null
+    );
 
     if (checkProducts.length === 0) {
       next();
-    }
-    else {
+    } else {
       res.status(404).json({ msg: "Product not found" });
     }
-
   } catch (error) {
     res.status(404).json({ msg: "Product not found" });
   }
-
-};
+}
 
 /**
  * CRUD
  */
 
-/* Creating one */
+/* Create Order */
 
 async function createOrder(req, res) {
   try {
-      let order = Order.build({
-        userID: req.body.userID,
-        orderPrice: req.body.orderPrice,
-        paymentMethods: req.body.paymentMethods,
-      });
+    let order = Order.build({
+      userID: req.body.userID,
+      orderPrice: req.body.orderPrice,
+      paymentMethods: req.body.paymentMethods,
+    });
 
-      await order.save().then((order) => {
-        if (!order.orderID) {
-          res.status(400).json({ msg: "Order not created" });
-        } else {
-          /* Read and insert Products*/
-          req.body.prodArray.forEach((everyProd) => {
-            const { pdtID, pdtQty, priceOrder } = everyProd;
-            createProductsOrder(order.orderID, pdtID, pdtQty, priceOrder);
-          });
-          res.status(200).json(order);
-        }
-      });
-   
+    await order.save().then((order) => {
+      if (!order.orderID) {
+        res.status(400).json({ msg: "Order not created" });
+      } else {
+        /* Read and insert Products*/
+        req.body.prodArray.forEach((everyProd) => {
+          const { pdtID, pdtQty, priceOrder } = everyProd;
+          createProductsOrder(order.orderID, pdtID, pdtQty, priceOrder);
+        });
+        res.status(200).json(order);
+      }
+    });
   } catch (error) {
     res.status(400).json({ msg: "Order wasn't created" });
   }
@@ -119,20 +116,27 @@ async function createProductsOrder(orderID, pdtID, pdtQty, priceOrder) {
   });
 }
 
-/* Getting all Orders, order by date */
+/* Get all Orders, order by date */
 
 async function getAll(req, res) {
-
-  let order = await Order.findAll({ 
-    order: [['orderDate', 'DESC']],
-    include: [ {
-      model: User,
-      attributes:['userName', 'userFullName', 'userEmail', 'userPhone', 'userAddress' ]
-    },
-    {
-      model: Product,
-      attributes:['pdtLargeName', 'pdtPrice', 'pdtThumbnail' ]
-    } ]
+  let order = await Order.findAll({
+    order: [["orderDate", "DESC"]],
+    include: [
+      {
+        model: User,
+        attributes: [
+          "userName",
+          "userFullName",
+          "userEmail",
+          "userPhone",
+          "userAddress",
+        ],
+      },
+      {
+        model: Product,
+        attributes: ["pdtLargeName", "pdtPrice", "pdtThumbnail"],
+      },
+    ],
   });
 
   if (!order) {
@@ -140,22 +144,29 @@ async function getAll(req, res) {
   } else {
     res.status(200).json(order);
   }
-  
 }
 
 /* Get one Order by ID */
 
 async function getOne(req, res) {
-  let order = await Order.findAll({ 
+  let order = await Order.findAll({
     where: { orderID: req.params.id },
-    include: [ {
-      model: User,
-      attributes:['userName', 'userFullName', 'userEmail', 'userPhone', 'userAddress' ]
-    },
-    {
-      model: Product,
-      attributes:['pdtLargeName', 'pdtPrice', 'pdtThumbnail' ]
-    } ]
+    include: [
+      {
+        model: User,
+        attributes: [
+          "userName",
+          "userFullName",
+          "userEmail",
+          "userPhone",
+          "userAddress",
+        ],
+      },
+      {
+        model: Product,
+        attributes: ["pdtLargeName", "pdtPrice", "pdtThumbnail"],
+      },
+    ],
   });
 
   if (!order) {
@@ -164,10 +175,6 @@ async function getOne(req, res) {
     res.status(200).json(order);
   }
 }
-
-/* Getting all User's Orders, order by date */
-
-
 
 /* Get Orders by userID */
 
@@ -177,22 +184,30 @@ async function getUserOrders(req, res) {
   if (!orders) {
     res.status(404).json({ msg: "Order not found" });
   } else {
-    let order = await Order.findAll({ 
+    let order = await Order.findAll({
       where: { userID: req.params.userID },
-      include: [ {
-        model: User,
-        attributes:['userName', 'userFullName', 'userEmail', 'userPhone', 'userAddress' ]
-      },
-      {
-        model: Product,
-        attributes:['pdtLargeName', 'pdtPrice', 'pdtThumbnail' ]
-      } ]
+      include: [
+        {
+          model: User,
+          attributes: [
+            "userName",
+            "userFullName",
+            "userEmail",
+            "userPhone",
+            "userAddress",
+          ],
+        },
+        {
+          model: Product,
+          attributes: ["pdtLargeName", "pdtPrice", "pdtThumbnail"],
+        },
+      ],
     });
     res.status(200).json(order);
   }
 }
 
-/* Updating one */
+/* Update Order */
 
 async function updatingOne(req, res) {
   req.order.orderStatus = req.body.orderStatus;
@@ -202,7 +217,7 @@ async function updatingOne(req, res) {
   });
 }
 
-/* Deleting one */
+/* Delete Order */
 
 async function deletingOne(req, res) {
   req.order.orderStatus = "Canceled";
@@ -211,8 +226,6 @@ async function deletingOne(req, res) {
     res.status(200).json({ msg: "Order has been Canceled.", order });
   });
 }
-
-
 
 module.exports = {
   checkUser,

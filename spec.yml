@@ -124,6 +124,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/product'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/NotFound'  
         '401':
           description: Unauthorized
           content:
@@ -233,6 +239,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/token'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/NotFound'  
         '401':
           description: Unauthorized, invalid username or password
           content:
@@ -260,12 +272,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-        '400':
-          description: User already exist
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+        
       requestBody:
         content:
           application/json:
@@ -407,7 +414,41 @@ paths:
               schema:
                 $ref: '#/components/responses/NotFound'  
                 
-   # Favorites             
+   # Favorites   
+   
+  /favorites/users/: 
+    post:
+      summary: Add a new product to favorite dishes of a user
+      description: Creates a new favorite dish
+      tags:
+        - Favorites
+      security: 
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/product_sum'
+      responses:
+        '201':
+          description: Favorite was created!
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/product_sum'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/NotFound'         
   
   /favorites/user/{id}:
     get:
@@ -440,7 +481,50 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/responses/UnauthorizedError'
-                  
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/NotFound' 
+    
+    delete:
+      summary: Delete user's favorites dishes
+      description: Delete Favorite's Product
+      tags:
+        - Favorites
+      security: 
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          description: User's ID
+          required: true
+          schema:
+            type: integer
+            example: 123
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/product_sum'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/NotFound'             
+    
   # Orders
   /orders:
     get:
@@ -517,8 +601,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/responses/UnauthorizedError'
-          
-  /orders/{id}:
+  
+  /order/{id}:
     get:
       summary: Get order info
       tags:
@@ -552,6 +636,43 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/responses/NotFound'  
+    
+  /order/{userID}:
+    get:
+      summary: Get orders from a user
+      tags:
+        - Orders
+      security: 
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: userID
+          description: User ID
+          required: true
+          schema:
+            type: integer
+            example: 23
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/order'
+        '401':
+          description: Error, you are not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'  
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/NotFound'    
+          
+  /orders/{id}:
     put:
       summary: Update order status
       tags:
@@ -593,6 +714,47 @@ paths:
               schema:
                 $ref: '#/components/responses/NotFound' 
   
+    delete:
+      summary: Delete Order
+      tags:
+        - Orders
+      security: 
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          description: Order ID
+          required: true
+          schema:
+            type: integer
+            example: 23
+        - in: query
+          name: state
+          description: New state of the order (Canceled)
+          example: 3
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/order'
+        '401':
+          description: Error, you are not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'  
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/NotFound' 
+    
           
 # components:
 

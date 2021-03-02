@@ -31,7 +31,7 @@ module.exports = {
               expiresIn: authConfig.expires,
             });
 
-            res.json({
+            res.status(200).json({
               user: users[0],
               token: token,
             });
@@ -84,7 +84,7 @@ module.exports = {
             expiresIn: authConfig.expires,
           });
           //res.status(201).json({ message: "User created" });
-          res.json({
+          res.status(201).json({
             user: user,
             token: token,
           });
@@ -108,7 +108,7 @@ module.exports = {
     });
   },
 
-  /* Getting all */
+  /* Get all Users */
 
   getAllUsers(req, res) {
     User.findAll({ where: { userStatus: "Enabled" } }).then((users) => {
@@ -116,13 +116,13 @@ module.exports = {
     });
   },
 
-  /* Getting one by ID */
+  /* Get User by ID */
 
   gettingOne(req, res) {
     res.status(200).json(req.user);
   },
 
-  /* Updating one */
+  /* Update User one */
 
   updatingOne(req, res) {
     /* Encrypt password */
@@ -145,7 +145,7 @@ module.exports = {
     });
   },
 
-  /* Deleting one */
+  /* Delete User */
 
   deletingOne(req, res) {
     req.user.destroy().then(() => {
@@ -153,25 +153,3 @@ module.exports = {
     });
   },
 };
-
-// https://www.youtube.com/watch?v=VuYLMnaH1Hc&t=240s
-
-// https://www.youtube.com/watch?v=E-O2504WiwQ&t=13s
-
-//Minuto 9
-
-//https://www.youtube.com/watch?v=VuYLMnaH1Hc
-
-//Nodejs api with express and mysql using sequelize part 1 - getting started
-// https://www.youtube.com/watch?v=0qWOfXWC8jQ
-
-//https://www.youtube.com/watch?v=0qWOfXWC8jQ&list=PLjfaBzlo-EiSBxKizxwQQbNBuTpv1x14e
-
-//Build a Node.js App With Sequelize [1] - Connection & Model
-//https://www.youtube.com/watch?v=bOHysWYMZM0
-
-//Build a Node.js App With Sequelize [2] - UI & Handlebars
-//https://www.youtube.com/watch?v=67OhLlFPqFQ
-
-//Build a Node.js App With Sequelize [3] - Add & Search
-//https://www.youtube.com/watch?v=6jbrWF3BWM0

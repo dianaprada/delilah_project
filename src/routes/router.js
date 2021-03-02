@@ -27,10 +27,10 @@ const RolController = require("../policies/rolPolicy");
  * Products CRUD
  */
 
-/* Getting all Products by status */
+/* Get all Products by status */
 router.get("/products", auth, ProdController.gettingAll);
 
-/* Creating one - Only admin users */
+/* Create Product - Only admin users */
 router.post(
   "/products/new",
   jsonParser,
@@ -39,7 +39,7 @@ router.post(
   ProdController.creatingOne
 );
 
-/* Getting one by ID */
+/* Get Product by ID */
 router.get(
   "/products/:id",
   auth,
@@ -48,7 +48,7 @@ router.get(
   ProdController.gettingOne
 );
 
-/* Updating one - Only admin users */
+/* Update Product - Only admin users */
 router.put(
   "/products/:id",
   jsonParser,
@@ -58,7 +58,7 @@ router.put(
   ProdController.updatingOne
 );
 
-/* Deleting one - Only admin users */
+/* Delete Product - Only admin users */
 router.delete(
   "/products/:id",
   auth,
@@ -83,10 +83,10 @@ router.post("/register", jsonParser, AuthController.signUp);
  * Users CRUD
  */
 
-/* Getting all - Only admin users consults all users */
+/* Get all Users - Only admin users consults all users */
 router.get("/users", auth, RolController.isAdmin, AuthController.getAllUsers);
 
-/* Getting one by ID - Only admin users consults users by ID */
+/* Getting User by ID - Only admin users consults users by ID */
 router.get(
   "/users/:id",
   auth,
@@ -95,7 +95,7 @@ router.get(
   AuthController.gettingOne
 );
 
-/* Updating one - Only admin users */
+/* Update User - Only admin users */
 router.put(
   "/users/:id",
   jsonParser,
@@ -105,7 +105,7 @@ router.put(
   AuthController.updatingOne
 );
 
-/* Deleting one - Only admin users */
+/* Delete User - Only admin users */
 router.delete(
   "/users/:id",
   auth,
@@ -114,13 +114,11 @@ router.delete(
   AuthController.deletingOne
 );
 
-/* TO DO IN SWAGGER */
-
 /**
  * Favorites CRUD
  */
 
-/* Creating one */
+/* Create Favorite Dish*/
 router.post(
   "/favorites/users/",
   jsonParser,
@@ -132,7 +130,7 @@ router.post(
   FavController.creatingOne
 );
 
-/* Getting all - Return all favorite dishes of a user  */
+/* Get all favorites - Return all favorite dishes of an client User */
 router.get(
   "/favorites/users/:id",
   auth,
@@ -141,7 +139,7 @@ router.get(
   FavController.gettingAll
 );
 
-/* Deleting one */
+/* Delete Favorite*/
 router.delete(
   "/favorites/users/",
   jsonParser,
@@ -156,8 +154,7 @@ router.delete(
  * Orders CRUD
  */
 
-/* Creating one */
-
+/* Create an Order */
 router.post(
   "/orders",
   jsonParser,
@@ -167,21 +164,14 @@ router.post(
   OrderController.createOrder
 );
 
-/* Getting all */
+/* Get all Orders*/
 /* Admin user consults all orders that have been created by Client users */
 /* Admin will be able to fetch any info. User only can view its own*/
 
 router.get("/orders", auth, RolController.isAdmin, OrderController.getAll);
 
-/* Getting all */
-/* Admin user consults all orders that have been created by Client users */
-/* Filter orders based on exact ISO date */
-/* Admin will be able to fetch any info. User only can view its own*/
-
-router.get("/orders/today", auth);
-
-/* Getting one by ID */
-/* Only Admin user consults one order that have been created by Client users */
+/* Get order by ID*/
+/* Admin user consults the details of an order */
 
 router.get(
   "/order/:id",
@@ -191,8 +181,8 @@ router.get(
   OrderController.getOne
 );
 
-/* Getting one by UserID */
-/* Only Admin user consults one order that have been created by Client users */
+/* Get orders by UserID */
+/* Client user consults his orders */
 
 router.get(
   "/orders/:userID",
@@ -201,8 +191,9 @@ router.get(
   OrderController.getUserOrders
 );
 
-/* Updating one */
+/* Update an Order */
 /* Only Admin user update one order that have been created by Client users */
+
 router.put(
   "/orders/:id",
   jsonParser,
@@ -212,8 +203,8 @@ router.put(
   OrderController.updatingOne
 );
 
-/* Deleting one */
-/* Only Admin user consults one order that have been created by Client users */
+/* Delete Order */
+/* Only an admin user can delete an order */
 
 router.delete(
   "/orders/:id",
@@ -222,29 +213,5 @@ router.delete(
   OrderController.findOrder,
   OrderController.deletingOne
 );
-
-/**
- * Products_Orders CRUD
- */
-
-/* Creating one */
-/* TO DO IN SWAGGER */
-router.post("/product_orders", jsonParser, auth);
-
-/* Getting all */
-/* TO DO IN SWAGGER */
-router.get("/product_orders", auth);
-
-/* Getting one by ID */
-/* TO DO IN SWAGGER */
-router.get("/product_orders/:id", auth);
-
-/* Updating one */
-/* TO DO IN SWAGGER */
-router.put("/product_orders/:id", jsonParser, auth);
-
-/* Deleting one */
-/* TO DO IN SWAGGER */
-router.delete("/product_orders/:id", auth);
 
 module.exports = router;

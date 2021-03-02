@@ -1,8 +1,7 @@
 const { User } = require("../database/models/dbModel");
 
 module.exports = {
-  
-/* Middelware Find User by ID */
+  /* Middelware Find User by ID */
 
   isAdmin(req, res, next) {
     let userRol = req.user.userRol;
@@ -15,7 +14,7 @@ module.exports = {
     }
   },
 
-/* Middelware Find User by ID */
+  /* Middelware Find User by ID */
 
   isClient(req, res, next) {
     let userRol = req.user.userRol;
@@ -27,5 +26,4 @@ module.exports = {
       res.status(401).json({ msg: "Unauthorized user" });
     }
   },
-  
 };

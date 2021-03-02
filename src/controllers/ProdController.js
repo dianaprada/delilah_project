@@ -1,7 +1,7 @@
 const { Product } = require("../database/models/dbModel");
 
 module.exports = {
-  /* Creating one */
+  /* Create Procuct */
 
   async creatingOne(req, res) {
     let products = await Product.create({
@@ -14,10 +14,10 @@ module.exports = {
       pdtStatus: req.body.pdtStatus,
     });
 
-    res.status(200).json(products);
+    res.status(201).json(products);
   },
 
-  /* Getting all Products by status */
+  /* Get all Products by status */
 
   async gettingAll(req, res) {
     let products = await Product.findAll({ where: { pdtStatus: "Enabled" } });
@@ -44,7 +44,7 @@ module.exports = {
     res.status(200).json(req.product);
   },
 
-  /* Updating one */
+  /* Update Product */
 
   async updatingOne(req, res) {
     req.product.pdtLargeName = req.body.pdtLargeName;
@@ -60,7 +60,7 @@ module.exports = {
     });
   },
 
-  /* Deleting one */
+  /* Delete Produc */
 
   async deletingOne(req, res) {
     req.product.destroy().then(() => {

@@ -388,20 +388,22 @@ Products_Order.init(
   {
     sequelize,
     modelName: "products_order",
-    timestamps: false 
+    timestamps: false,
     // options
   }
 );
 
 User.hasMany(Order, {
-  foreignKey: { name: 'userID', allowNull: false }
+  foreignKey: { name: "userID", allowNull: false },
 });
 Order.belongsTo(User, {
-  foreignKey: { name: 'userID', allowNull: false }
+  foreignKey: { name: "userID", allowNull: false },
 });
-Order.belongsToMany(Product, { through: Products_Order, foreignKey: 'orderID' });
-Product.belongsToMany(Order, { through: Products_Order, foreignKey: 'pdtID' });
-
+Order.belongsToMany(Product, {
+  through: Products_Order,
+  foreignKey: "orderID",
+});
+Product.belongsToMany(Order, { through: Products_Order, foreignKey: "pdtID" });
 
 /*
 Bands.hasMany(Albums);
