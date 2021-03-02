@@ -84,7 +84,7 @@ router.post("/register", jsonParser, AuthController.signUp);
  */
 
 /* Getting all - Only admin users consults all users */
-router.get("/users", auth, RolController.isAdmin, AuthController.gettingAll);
+router.get("/users", auth, RolController.isAdmin, AuthController.getAllUsers);
 
 /* Getting one by ID - Only admin users consults users by ID */
 router.get(
@@ -120,7 +120,8 @@ router.delete(
  * Favorites CRUD
  */
 
-/* Creating one */ router.post(
+/* Creating one */
+router.post(
   "/favorites/users/",
   jsonParser,
   auth,
@@ -156,14 +157,13 @@ router.delete(
  */
 
 /* Creating one */
-/* User Client Create an order */
-/* Can an admin user create an order? */
 
 router.post(
   "/orders",
   jsonParser,
   auth,
   OrderController.checkUser,
+  OrderController.checkOrderData,
   OrderController.createOrder
 );
 
@@ -171,7 +171,7 @@ router.post(
 /* Admin user consults all orders that have been created by Client users */
 /* Admin will be able to fetch any info. User only can view its own*/
 
-router.get("/orders", auth, RolController.isAdmin, OrderController.gettingAll );
+router.get("/orders", auth, RolController.isAdmin, OrderController.getAll);
 
 /* Getting all */
 /* Admin user consults all orders that have been created by Client users */
@@ -188,9 +188,8 @@ router.get(
   auth,
   RolController.isAdmin,
   OrderController.findOrder,
-  OrderController.gettingOne
+  OrderController.getOne
 );
-
 
 /* Getting one by UserID */
 /* Only Admin user consults one order that have been created by Client users */
@@ -199,9 +198,8 @@ router.get(
   "/orders/:userID",
   auth,
   OrderController.checkUserParams,
-  OrderController.gettingAllUserOrders
+  OrderController.getUserOrders
 );
-
 
 /* Updating one */
 /* Only Admin user update one order that have been created by Client users */
@@ -217,7 +215,13 @@ router.put(
 /* Deleting one */
 /* Only Admin user consults one order that have been created by Client users */
 
-router.delete("/orders/:id", auth, RolController.isAdmin, OrderController.findOrder, OrderController.deletingOne);
+router.delete(
+  "/orders/:id",
+  auth,
+  RolController.isAdmin,
+  OrderController.findOrder,
+  OrderController.deletingOne
+);
 
 /**
  * Products_Orders CRUD

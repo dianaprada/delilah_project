@@ -11,7 +11,13 @@ const sequelize = new Sequelize(
         host: 'localhost',
         dialect: "mysql" 
 
-    }
+    },
+    database.dialectOptions, {
+        useUTC: false, //for reading from database
+        dateStrings: true,
+        typeCast: true
+  },
+  database.timezone, '-05:00' //for writing to database
 
   );
 

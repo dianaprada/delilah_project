@@ -10,7 +10,6 @@ const jwt = require("jsonwebtoken");
 const authConfig = require("../../config/auth");
 
 module.exports = {
-  
   /* login */
 
   signIn(req, res) {
@@ -58,11 +57,9 @@ module.exports = {
       passwordLen.length < 8 ||
       passwordLen.length > 20
     ) {
-      res
-        .status(400)
-        .json({
-          message: "Password must be between 8 and 20 characters in length.",
-        });
+      res.status(400).json({
+        message: "Password must be between 8 and 20 characters in length.",
+      });
     } else {
       /* Encrypt password */
       let hashPassword = bcrypt.hashSync(
@@ -111,10 +108,9 @@ module.exports = {
     });
   },
 
-
   /* Getting all */
 
-  gettingAll(req, res) {
+  getAllUsers(req, res) {
     User.findAll({ where: { userStatus: "Enabled" } }).then((users) => {
       res.status(200).json(users);
     });

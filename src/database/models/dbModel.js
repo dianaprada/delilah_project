@@ -307,7 +307,6 @@ Order.init(
       validate: {
         isDate: true, // only allow date strings
       },
-
     },
     orderPrice: {
       type: DataTypes.DECIMAL(10, 2),
@@ -389,11 +388,20 @@ Products_Order.init(
   {
     sequelize,
     modelName: "products_order",
+    timestamps: false 
     // options
   }
 );
 
-User.hasMany(Order, { foreignKey: 'userID' });
+User.hasMany(Order, {
+  foreignKey: { name: 'userID', allowNull: false }
+});
+Order.belongsTo(User, {
+  foreignKey: { name: 'userID', allowNull: false }
+});
+Order.belongsToMany(Product, { through: Products_Order, foreignKey: 'orderID' });
+Product.belongsToMany(Order, { through: Products_Order, foreignKey: 'pdtID' });
+
 
 /*
 Bands.hasMany(Albums);
